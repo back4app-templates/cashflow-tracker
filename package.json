@@ -1,0 +1,26 @@
+{
+  "name": "cashflow-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Single-organization cash flow tracker (transactions, running balances, category reports) on Back4app Backend + Containers.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "setup": "node scripts/setup.mjs",
+    "seed": "node scripts/seed.mjs",
+    "check": "node scripts/check.mjs",
+    "check:permissions": "node scripts/check-permissions.mjs",
+    "check:concurrency": "node scripts/check-concurrency.mjs",
+    "export": "node scripts/export.mjs",
+    "restore": "node scripts/restore.mjs",
+    "users": "node scripts/users.mjs",
+    "generate": "node scripts/generate-demo-data.mjs"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

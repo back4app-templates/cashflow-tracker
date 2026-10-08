@@ -1,0 +1,7 @@
+{
+  "name": "cashflow-tracker-cloud",
+  "private": true,
+  "type": "commonjs",
+  "description": "Cloud Code for the cash flow tracker. No npm dependencies: everything uses the Parse SDK the server provides.",
+  "dependencies": {}
+}
