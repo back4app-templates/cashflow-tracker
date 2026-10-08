@@ -22,16 +22,18 @@ const config = {
   demo: process.env.DEMO === 'true',
 };
 
-let commit = process.env.SOURCE_VERSION || process.env.GIT_COMMIT || '';
+// Version marker for deploy checks: package.json version (bumped per release) plus the commit when the build exposes it.
+const pkg = JSON.parse(readFileSync(path.join(here, 'package.json'), 'utf8'));
+let commit = process.env.SOURCE_VERSION || process.env.GIT_COMMIT || process.env.COMMIT_SHA || '';
 if (!commit) {
-  try { commit = readFileSync(path.join(here, 'COMMIT'), 'utf8').trim(); } catch { commit = 'dev'; }
+  try { commit = readFileSync(path.join(here, 'COMMIT'), 'utf8').trim(); } catch { commit = 'unknown'; }
 }
 
 const app = express();
 app.disable('x-powered-by');
 
 app.get('/healthz', (req, res) => {
-  res.json({ ok: true, commit, uptime: Math.round(process.uptime()) });
+  res.json({ ok: true, version: pkg.version, commit, uptime: Math.round(process.uptime()) });
 });
 
 app.get('/config.js', (req, res) => {
@@ -47,5 +49,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`cashflow-tracker listening on :${PORT} (commit ${commit}, demo=${config.demo})`);
+  console.log(`cashflow-tracker ${pkg.version} listening on :${PORT} (commit ${commit}, demo=${config.demo})`);
 });
