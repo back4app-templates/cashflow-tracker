@@ -1,6 +1,6 @@
 {
   "name": "cashflow-tracker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Single-organization cash flow tracker (transactions, running balances, category reports) on Back4app Backend + Containers.",
   "type": "module",
