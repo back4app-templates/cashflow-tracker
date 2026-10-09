@@ -81,3 +81,11 @@ Sequence, all on app 2030b86b…:
   (dashboard-triggered, 56 s) → `APP_LABEL` present in the process. So post-creation variables can work. Difference from
   the failing app: every firmbook redeploy after the variable was added was **push-triggered**. Hypothesis under test:
   push builds reuse the environment snapshot of the last dashboard-triggered deploy.
+- 16:05 UTC: on **firmbook** (2030b86b…), *Build & deploy → Save → Deploy now* (dashboard-triggered, 46 s) → still no
+  `SETUP_SECRET` in the process. Hypothesis rejected: the trigger does not matter. **This app never injects user-defined
+  variables added after creation**, while a fresh app does. Candidate causes for the Containers team: the blocked →
+  reactivated plan episode (14:14–14:35 UTC) or the pre-created empty `DATABASE_URL` user row. Both apps have that row,
+  so the plan episode is the stronger suspect.
+- Decision: move the demo to a fresh app created the way the article tells the reader to (secret in the create form):
+  `firmbook-envtest` (e7dae17a-2ce1-499a-801b-f44aba79f855) → owner upgrades it to Starter + PostgreSQL; keep 2030b86b…
+  untouched for the Containers team to inspect.
