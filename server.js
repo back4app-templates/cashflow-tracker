@@ -28,7 +28,8 @@ app.get('/healthz', async (req, res) => {
   if (pool && !state.maintenance) {
     try { await pool.query('select 1'); out.database = 'ok';
       // Until the owner exists, say whether the setup passphrase reached the process (length only) — the first thing a reader needs to debug.
-      if (!(await pool.query('select 1 from bootstrap where id = 1')).rows.length) out.firstRun = { setupSecret: process.env.SETUP_SECRET ? `set (${process.env.SETUP_SECRET.length} chars)` : 'missing' };
+      if (!(await pool.query('select 1 from bootstrap where id = 1')).rows.length) out.firstRun = { setupSecret: process.env.SETUP_SECRET ? `set (${process.env.SETUP_SECRET.length} chars)` : 'missing',
+        envNames: Object.keys(process.env).filter((k) => !/^(PG|npm_|NODE|PATH$|HOME$|HOSTNAME$|PWD$|SHLVL$|_$|LANG|TERM$|PORT$|CNB_|DATABASE_URL$)/.test(k)).sort() };
     } catch (e) { out.ok = false; out.database = 'unreachable'; }
   }
   else out.database = dbConfigured ? 'maintenance' : 'not configured';
