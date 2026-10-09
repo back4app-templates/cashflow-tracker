@@ -26,7 +26,7 @@ tracker. It lists every step, which ones are unavoidably manual, and what to han
 | 2 | Create a backend app | **yes** (dashboard) | Dashboard → New App → *Build your Backend* → name it → Create |
 | 3 | Copy keys into `.env` | **yes** | App → App Settings → Security & Keys → *Show key* for the master key |
 | 4 | Create classes, CLPs, roles, users, config | no | `npm run setup -- --demo --reference-date 2026-09-30` (omit flags for a real ledger) |
-| 5 | Deploy Cloud Code | **yes** (dashboard) or CLI | Dashboard → Cloud Code → upload `cloud/main.js`, `cloud/generate.js`, `cloud/package.json` → Deploy. See "Cloud Code deploy quirk" below. |
+| 5 | Deploy Cloud Code | **yes** (dashboard) | Dashboard → Cloud Code → *Upload → Upload Files* → `cloud/main.js` and `cloud/generate.js` (`package.json` is not needed) → confirm the badge "Files pending deploy (2)" → Deploy. See "Cloud Code deploy quirk" below. |
 | 6 | Load data | no | `npm run seed -- --reference-date 2026-09-30` (demo) — or start empty |
 | 7 | Verify | no | `npm run check -- --reference-date 2026-09-30` · `npm run check:permissions` · `npm run check:concurrency` |
 | 8 | Push the repo to GitHub | no | `git push` |
@@ -65,8 +65,11 @@ created: redo steps 5 and 4.
 
 ## Cloud Code deploy quirk (Back4app, observed September 2026)
 
-On a freshly created backend, the first Deploy in the Cloud Code editor can report "Success" while shipping nothing
-(Logs: `main.js not found`). Prove a deploy with a request, never with the dialog:
+On a freshly created backend, the first Deploy in the Cloud Code editor reports "Success" while shipping nothing
+(Logs → System: `Warning: main.js not found`). We saw it on two fresh backends on 2026-10-09. A Deploy clicked without the
+"Files pending deploy (N)" badge also ships nothing. Recipe that worked both times: reload the Cloud Code page, open each
+file, make it dirty again (edit and restore a character, or re-upload), confirm the badge, Deploy. Prove it with a request,
+never with the dialog:
 
 ```text
 $ curl -s -X POST https://parseapi.back4app.com/functions/base \
