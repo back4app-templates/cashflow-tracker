@@ -40,3 +40,13 @@ persistence, billed amount, Instant Rollback behavior, env-var change → redepl
 | Billing | Stated $10/mo; the owner's invoice confirms the actual charge (pending). |
 
 Still open: storage behaviour at 1 GB, add-on removal, custom-domain attach time, the browser/AV deliverability matrix, invoice.
+
+## 2026-10-09 — environment variables and redeploys (observed while setting `SETUP_SECRET`)
+
+- The env page says "A change needs a redeploy" and, unlike *Build & deploy*, saving does **not** offer "Deploy now".
+- *App actions → Deploy the latest commit* was clicked twice (15:28 and 15:39 UTC) and produced no deployment in the list
+  and no restart (`bootedAt` unchanged). Pushing a commit (autodeploy) did redeploy both times, 68–79 s to live.
+  → For the article: set `SETUP_SECRET` **in the create form**, before the first deploy, so the reader never needs a manual
+  redeploy. Report the inert menu item to the Containers team.
+- Values typed into the env form by setting the DOM value directly were not saved ("KEY 2" showed, reload showed one row);
+  typing them normally saved. Irrelevant for a human reader; relevant for anyone automating the dashboard.
