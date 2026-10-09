@@ -1,0 +1,10 @@
+{
+  "name": "firmbook",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Small-business finance app (invoices, bills, weekly money view) on Back4app Containers + PostgreSQL. Work in progress.",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "^5.1.0", "pg": "^8.13.1" }
+}
