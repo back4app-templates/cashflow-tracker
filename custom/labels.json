@@ -1,0 +1,8 @@
+{
+  "interface": 1,
+  "appName": "Firmbook",
+  "invoiceTitle": "Invoice",
+  "billTitle": "Bill",
+  "thisWeek": "This week",
+  "invoiceFooter": "Thank you for your business."
+}
