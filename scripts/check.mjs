@@ -5,13 +5,14 @@
 //   node scripts/check.mjs [--reference-date 2026-09-30] [--size large]
 // The backend's Config.referenceDate must equal --reference-date (setup.mjs --reference-date sets it).
 import { createRequire } from 'node:module';
-import { loadEnv, rest, args, login, fn, readCredentials, fmt } from './lib.mjs';
+import path from 'node:path';
+import { loadEnv, rest, args, login, fn, readCredentials, fmt, ROOT } from './lib.mjs';
 
 const require = createRequire(import.meta.url);
 const { generate } = require('../cloud/generate.js');
 
-const env = loadEnv();
 const a = args();
+const env = loadEnv(a.env ? path.resolve(ROOT, a.env) : undefined);
 const REF = a['reference-date'] || process.env.REFERENCE_DATE || '2026-09-30';
 const creds = readCredentials();
 const FIN_USER = process.env.FINANCE_USER || 'finance';

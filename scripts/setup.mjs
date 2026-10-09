@@ -4,10 +4,11 @@
 // the first users (the viewer is locked), and the Parse Config values. No dashboard clicks.
 //   node scripts/setup.mjs [--demo] [--reference-date 2026-09-30] [--timezone America/New_York]
 //                          [--finance-user finance] [--viewer-user demo] [--no-viewer]
-import { loadEnv, rest, where, args, ptr, readCredentials, writeCredentials, password, ParseError } from './lib.mjs';
+import path from 'node:path';
+import { loadEnv, rest, where, args, ptr, readCredentials, writeCredentials, password, ParseError, ROOT } from './lib.mjs';
 
-const env = loadEnv();
 const a = args();
+const env = loadEnv(a.env ? path.resolve(ROOT, a.env) : undefined);
 
 const MASTER_ONLY = { find: {}, count: {}, get: {}, create: {}, update: {}, delete: {}, addField: {}, protectedFields: {} };
 const SCHEMAS = {

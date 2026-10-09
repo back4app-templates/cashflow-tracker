@@ -63,3 +63,23 @@ Note: the health check line says it hits the port over http — a port check, as
 - Re-marked both files as pending (setValue with a trailing newline → "Files pending deploy (2)"), Deploy #2 12:35:18Z → /functions/base answered 209 at 12:35:20Z.
   Same first-deploy-ships-nothing behavior seen on earlier apps (Sept 2026). The dialog is not proof; the request is.
 - "Upload → Upload Files" opens a native file dialog (not scriptable); cloud/package.json was not uploaded (no deps, not needed).
+
+# Verification results 2026-10-09 (default dataset, reference date 2026-09-30, backend Free plan, USA East)
+- check.mjs: 159 passed, 0 failed (balances, month lists, running balances, reports cash+accrual, all rules).
+- check-permissions.mjs: 82 passed (4 callers × 13 functions; direct class access 119; roles 119; locked demo identity 119;
+  regular user editing another user → 206 "not own session" — still a denial; public sign-up 119; reset request for demo accepted).
+- check-concurrency.mjs (10 parallel): duplicate names 1 of 10 created (hooks serialized by timing, not a guarantee);
+  delete vs 10 creates: delete rejected 119 because creates landed first, account survived, consistent; double submit: 2 rows stored.
+- Large dataset (3,744 rows, 3,627 in the reference month): seed 51.5 s; listMonth → 142 LIMIT_EXCEEDED (all accounts and Operating checking),
+  report totals still exact over the full dataset; 147 passed. Reseed back to default 42.0 s (deleting 3,744 first).
+- Latency (100 sequential runs each after 10 warm-ups, from the author's machine in Brazil to USA East, role demo):
+  listMonth p50 439 ms · p95 514 ms (min 420, max 541); report p50 442 · p95 542 (min 424, max 602). CSV in docs/evidence.
+- nightlySnapshot via POST /jobs (master key): HTTP 200; Snapshot row 41,541 bytes, counts 3/12/144, ACL {}; anonymous read → 119.
+- export.mjs → exports/export-2026-10-09T12-45-25-880Z.json (3/12/144).
+
+# Restore drill 2026-10-09 (second backend "cashflow-tracker-restore", id 2248bfcf-e798-4d01-afa2-9eea6db7b5d4, Free)
+- setup.mjs --env .env.restore: classes/CLPs/roles/users/config created in one run.
+- Cloud Code on the fresh backend: deploy #1 12:48:36Z and #2 12:49:29Z both logged "main.js not found" — #2 was clicked without the
+  "Files pending deploy" badge (setValue after the Success dialog did not mark files dirty). After a page reload + re-marking (badge "2"),
+  deploy #3 at 12:54:48Z answered 209 at 12:54:50Z. Rule: only a deploy that starts with the pending badge ships files; verify by request.
+- restore.mjs from exports/export-2026-10-09T12-45-25-880Z.json → see check-restore log for the result.

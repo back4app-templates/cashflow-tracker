@@ -6,6 +6,14 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+
+// Local development only: read .env if present (Containers injects real env vars; nothing is read from disk there).
+try {
+  for (const line of readFileSync(path.join(here, '.env'), 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+    if (m && process.env[m[1]] === undefined && !['MASTER_KEY', 'REST_KEY'].includes(m[1])) process.env[m[1]] = m[2];
+  }
+} catch { /* no .env: fine */ }
 const PORT = Number(process.env.PORT) || 8080;
 
 const required = ['APP_ID', 'JS_KEY'];
