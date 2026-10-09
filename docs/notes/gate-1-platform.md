@@ -68,3 +68,12 @@ Sequence, all on app 2030b86b…:
   (c) report to the Containers team with this app id and the timestamps above.
 - Also seen: a *Finish your setup* dialog that reads `.env.example` + `package.json` ("We read this as Node.js 22 + Express 5
   + PostgreSQL") and asks for the variable values — the right place for `SETUP_SECRET` in the walkthrough once it deploys.
+
+## 2026-10-09 16:00 UTC — control test on a fresh Free app (`firmbook-envtest`, id e7dae17a-2ce1-499a-801b-f44aba79f855)
+
+- Created from the create form with `SETUP_SECRET` typed there (Free, no database). First build 147 s (no layer cache:
+  "Preparing build without layer reuse"). `/healthz` → `setupSecret: set (38 chars)`, `SETUP_SECRET` in the env names.
+  **Variables set at creation are injected.**
+- The create form pre-creates a user variable row named `DATABASE_URL` ("Your code needs a database — we connect it and
+  fill this in"). With no add-on it ships empty → this is where firmbook's empty `DATABASE_URL` came from.
+- Next: add a variable to this app after creation, redeploy, check — decides whether post-creation edits fail everywhere.
