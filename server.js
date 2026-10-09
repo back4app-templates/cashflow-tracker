@@ -32,7 +32,9 @@ app.get('/healthz', async (req, res) => {
         envNames: Object.keys(process.env).filter((k) => !/^(PG|npm_|NODE|PATH$|HOME$|HOSTNAME$|PWD$|SHLVL$|_$|LANG|TERM$|PORT$|CNB_|DATABASE_URL$)/.test(k)).sort() };
     } catch (e) { out.ok = false; out.database = 'unreachable'; }
   }
-  else out.database = dbConfigured ? 'maintenance' : 'not configured';
+  else { out.database = dbConfigured ? 'maintenance' : 'not configured';
+    if (!dbConfigured) out.firstRun = { setupSecret: process.env.SETUP_SECRET ? `set (${process.env.SETUP_SECRET.length} chars)` : 'missing',
+      envNames: Object.keys(process.env).filter((k) => !/^(PG|npm_|NODE|PATH$|HOME$|HOSTNAME$|PWD$|SHLVL$|_$|LANG|TERM$|PORT$|CNB_|DATABASE_URL$)/.test(k)).sort() }; }
   res.status(out.ok ? 200 : 503).json(out);
 });
 app.use('/static', express.static('public', { maxAge: '1h' }));

@@ -50,3 +50,21 @@ Still open: storage behaviour at 1 GB, add-on removal, custom-domain attach time
   redeploy. Report the inert menu item to the Containers team.
 - Values typed into the env form by setting the DOM value directly were not saved ("KEY 2" showed, reload showed one row);
   typing them normally saved. Irrelevant for a human reader; relevant for anyone automating the dashboard.
+
+## 2026-10-09 15:53 UTC — environment variables added after creation do not reach the container (BLOCKER)
+
+Sequence, all on app 2030b86b…:
+1. *Settings → Environment variables → Add variable* `SETUP_SECRET` (typed, saved; after reload the row is listed with a
+   non-empty masked value).
+2. Redeploy via git push (dashboard-initiated deploys — *Deploy the latest commit* ×2, *Finish your setup → Start the
+   build* ×1 — produced no deployment at all).
+3. `/healthz` on the new deployment lists the process environment names: `COLOR, EDITOR, HEROKU_AVAILABLE_PARALLELISM,
+   INIT_CWD, LD_LIBRARY_PATH, WEB_CONCURRENCY, WEB_MEMORY` (+ the filtered `PG*`, `DATABASE_URL`, `PORT`) — **no
+   `SETUP_SECRET`**. Repeated three times (15:33, 15:45, 15:53 UTC) with three different ways of saving the variable.
+- Variables set **in the create form** do reach the container: the cashflow-tracker app (APP_ID, JS_KEY, SERVER_URL, DEMO)
+  runs on them. So the defect is specific to variables edited after creation (or to this app).
+- Consequences for the article: (a) `SETUP_SECRET` must be set in the create form (already the plan); (b) the
+  **`OWNER_RESET_TOKEN` lost-access flow depends on adding a variable later — it cannot work until this is fixed**;
+  (c) report to the Containers team with this app id and the timestamps above.
+- Also seen: a *Finish your setup* dialog that reads `.env.example` + `package.json` ("We read this as Node.js 22 + Express 5
+  + PostgreSQL") and asks for the variable values — the right place for `SETUP_SECRET` in the walkthrough once it deploys.
