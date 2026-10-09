@@ -55,8 +55,14 @@ async function settings() {
     demo: c.get('demo') === true,
   };
 }
+// Built from formatToParts: the 'en-CA' shortcut that yields YYYY-MM-DD locally came back as "10/09/2026" on the server's
+// reduced-ICU Node, so never trust a locale's output format for a machine-readable date.
 function todayIn(tz) {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+  const get = (type) => parts.find((p) => p.type === type).value;
+  const ymd = `${get('year')}-${get('month')}-${get('day')}`;
+  if (!isDate(ymd)) throw new Error(`todayIn produced "${ymd}" — refusing to compute today without a valid calendar date`);
+  return ymd;
 }
 async function today() {
   const s = await settings();
