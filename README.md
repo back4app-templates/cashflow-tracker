@@ -13,8 +13,9 @@ internal-tool starter; `docs/api.md` → *Guarantees* says exactly what is and i
 
 ## Try the demo
 
-Demo sign-in (read only): username `demo`, password published here at launch. The demo data is fictitious
-("Bluefin Studio, LLC") and is regenerated every night.
+Live demo: **https://cashflowtracker-yg1lw573.b4a.run** — sign in with username `demo` and password `bluefin-demo-2026`
+(read only; the account is locked so nobody can change its password). The data is fictitious ("Bluefin Studio, LLC")
+and is regenerated every night at 03:15 UTC.
 
 ## Deploy your own (about 20 minutes)
 
