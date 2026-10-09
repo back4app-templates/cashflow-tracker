@@ -7,7 +7,7 @@ const PALETTE = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300
   '#4a3aa7', '#e34948', '#0e7c86', '#9c6b2f', '#7a8794', '#c0392b'];
 
 const ACCOUNTS = [
-  { name: 'Operating checking', openingBalance: 4825000, currency: 'USD' },
+  { name: 'Operating checking', openingBalance: 14825000, currency: 'USD' },
   { name: 'Payroll', openingBalance: 1200000, currency: 'USD' },
   { name: 'Savings reserve', openingBalance: 7500000, currency: 'USD' },
 ];
@@ -77,7 +77,7 @@ function generate(opts = {}) {
   const push = (t) => tx.push(t);
   const paidIfDue = (due) => (due <= referenceDate ? due : null);
 
-  let payoutBase = 820000;   // grows ~4% a month
+  let payoutBase = 1040000;  // grows ~4% a month
   const monthList = monthsBack(ry, rm, months);
 
   monthList.forEach(([y, m], mi) => {
