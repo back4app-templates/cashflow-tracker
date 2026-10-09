@@ -56,3 +56,10 @@ click "Create app" ≈14:34:33 (local clock) · 14:34:40.830 PREPARING DEPLOYMEN
 ("trying to hit the 8080 port using http") · 14:35:39.603 DEPLOYMENT READY.
 → PREPARING → READY = 58.8 s; click → READY ≈ 66 s. /healthz answered {"ok":true,"version":"0.1.1","commit":"unknown"} (buildpack exposes no commit env).
 Note: the health check line says it hits the port over http — a port check, as observed on earlier apps; do not claim path-based checks.
+
+# Cloud Code deploy, 2026-10-09 (dashboard editor, files loaded from the public mirror via fetch + Monaco setValue)
+- Deploy #1 12:31:04Z: dialog "Deploying… / Success on deploying your changes!" but System Logs at 12:31:11Z:
+  "Warning: main.js not found: to run any cloud code functions you need first to create a main.js file"; /functions/base → 141 "Invalid function" for 3+ min.
+- Re-marked both files as pending (setValue with a trailing newline → "Files pending deploy (2)"), Deploy #2 12:35:18Z → /functions/base answered 209 at 12:35:20Z.
+  Same first-deploy-ships-nothing behavior seen on earlier apps (Sept 2026). The dialog is not proof; the request is.
+- "Upload → Upload Files" opens a native file dialog (not scriptable); cloud/package.json was not uploaded (no deps, not needed).

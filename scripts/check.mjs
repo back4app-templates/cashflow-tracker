@@ -66,12 +66,12 @@ for (const ym of months) {
   for (const acc of [null, ...data.accounts.map((x) => x.name)]) {
     const r = await fn(env, 'listMonth', acc ? { month: ym, accountId: accId[acc] } : { month: ym }, session);
     const label = `${ym} · ${acc || 'all accounts'}`;
-    if (a.size === 'large' && ym === refMonth && !acc) {
-      ok(!r.ok && /LIMIT_EXCEEDED/.test(r.error || ''), `${label}: LIMIT_EXCEEDED instead of a truncated list`, r.ok ? `returned ${r.result.transactions.length} rows` : r.error);
+    const inMonth = tx.filter((t) => dateOf(t) >= start && dateOf(t) < end && (!acc || t.account === acc || t.toAccount === acc));
+    if (inMonth.length > 2000) {
+      ok(!r.ok && /LIMIT_EXCEEDED/.test(r.error || ''), `${label}: ${inMonth.length} rows → LIMIT_EXCEEDED instead of a truncated list`, r.ok ? `returned ${r.result.transactions.length} rows` : r.error);
       continue;
     }
     if (!r.ok) { ok(false, label, r.error); continue; }
-    const inMonth = tx.filter((t) => dateOf(t) >= start && dateOf(t) < end && (!acc || t.account === acc || t.toAccount === acc));
     eq(r.result.transactions.length, inMonth.length, `${label}: ${inMonth.length} rows`);
     eq(r.result.previousBalance, realizedBefore(start, acc), `${label}: previous balance ${fmt(r.result.previousBalance)}`);
     eq(r.result.previousProjected, projectedBefore(start, acc), `${label}: previous projected ${fmt(r.result.previousProjected)}`);

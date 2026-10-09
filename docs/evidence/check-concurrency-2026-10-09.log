@@ -1,0 +1,16 @@
+check-concurrency.mjs · 10 parallel requests per case
+
+1. 10 parallel createCategory("ZZ race cat 1791549431434")
+   1 succeeded, 9 rejected (142)
+   → no duplicate (unique index or lucky timing)
+
+2. deleteAccount ∥ 10 × createTransaction on that account
+   delete rejected (119: This account has 8 transaction(s). Move or delete them first.); 10 creates succeeded; account still exists; 10 transaction(s) reference it
+   → consistent: the account survived because a transaction won the race
+
+3. the same createTransaction sent twice at once
+   2 created → both stored: the API has no idempotency key; the UI disables the button while saving, nothing more
+
+4. parallel deletes of the last two accounts: not exercised here (the ledger has 3 accounts). The same window as case 2 applies.
+
+Done. Every observation above is expected behavior of validation hooks without transactions; see docs/api.md → Guarantees.

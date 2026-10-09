@@ -86,7 +86,7 @@ r = await tryDel(sessions.viewer, viewerMe.objectId); ok(!r.ok && r.code === 119
 r = await tryPut(sessions.finance, financeMe.objectId, { email: `finance+${Date.now()}@example.com` }); ok(r.ok, `regular user changes own e-mail → ${r.ok ? 'ok' : r.code} (expected ok)`);
 if (r.ok) await rest(env, 'PUT', `/users/${financeMe.objectId}`, { email: { __op: 'Delete' } }, { master: true });
 r = await tryPut(sessions.finance, financeMe.objectId, { locked: true }); ok(!r.ok && r.code === 119, `regular user locks itself → ${r.ok ? 'changed!' : r.code} (expected 119)`);
-r = await tryPut(sessions.finance, viewerMe.objectId, { email: 'y@example.com' }); ok(!r.ok && r.code === 101, `regular user edits another user → ${r.ok ? 'changed!' : r.code} (expected 101: not visible)`);
+r = await tryPut(sessions.finance, viewerMe.objectId, { email: 'y@example.com' }); ok(!r.ok && (r.code === 101 || r.code === 206), `regular user edits another user → ${r.ok ? 'changed!' : r.code} (expected 101 or 206: not visible / not own session)`);
 r = await tryDel(sessions.finance, financeMe.objectId); ok(!r.ok && r.code === 119, `regular user deletes itself → ${r.ok ? 'deleted!' : r.code} (expected 119)`);
 r = await rest(env, 'POST', '/users', { username: `signup_${Date.now()}`, password: 'x' }, { headers: { 'X-Parse-Javascript-Key': env.jsKey } }).then(() => ({ ok: true })).catch((e) => ({ ok: false, code: codeOf(e) }));
 ok(!r.ok && r.code === 119, `public sign-up → ${r.ok ? 'created!' : r.code} (expected 119)`);

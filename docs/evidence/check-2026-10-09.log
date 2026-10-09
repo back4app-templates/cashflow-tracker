@@ -1,0 +1,170 @@
+check.mjs · reference date 2026-09-30 · 144 transactions in the dataset
+
+base
+  PASS  base() answers
+  PASS  backend "today" equals the reference date (Config.referenceDate)
+  PASS  account count
+  PASS  category count
+  PASS  current balance · Savings reserve = $105,000.00
+  PASS  current balance · Payroll = $12,000.00
+  PASS  current balance · Operating checking = -$56,743.79
+  PASS  uses · Savings reserve
+  PASS  uses · Payroll
+  PASS  uses · Operating checking
+
+listMonth · previous balances, rows, running balances
+  PASS  2026-04 · all accounts: 18 rows
+  PASS  2026-04 · all accounts: previous balance $135,250.00
+  PASS  2026-04 · all accounts: previous projected $135,250.00
+  PASS  2026-04 · Operating checking: 16 rows
+  PASS  2026-04 · Operating checking: previous balance $48,250.00
+  PASS  2026-04 · Operating checking: previous projected $48,250.00
+  PASS  2026-04 · Payroll: 4 rows
+  PASS  2026-04 · Payroll: previous balance $12,000.00
+  PASS  2026-04 · Payroll: previous projected $12,000.00
+  PASS  2026-04 · Savings reserve: 1 rows
+  PASS  2026-04 · Savings reserve: previous balance $75,000.00
+  PASS  2026-04 · Savings reserve: previous projected $75,000.00
+  PASS  2026-05 · all accounts: 23 rows
+  PASS  2026-05 · all accounts: previous balance $113,460.11
+  PASS  2026-05 · all accounts: previous projected $113,460.11
+  PASS  2026-05 · Operating checking: 21 rows
+  PASS  2026-05 · Operating checking: previous balance $21,460.11
+  PASS  2026-05 · Operating checking: previous projected $21,460.11
+  PASS  2026-05 · Payroll: 4 rows
+  PASS  2026-05 · Payroll: previous balance $12,000.00
+  PASS  2026-05 · Payroll: previous projected $12,000.00
+  PASS  2026-05 · Savings reserve: 1 rows
+  PASS  2026-05 · Savings reserve: previous balance $80,000.00
+  PASS  2026-05 · Savings reserve: previous projected $80,000.00
+  PASS  2026-06 · all accounts: 26 rows
+  PASS  2026-06 · all accounts: previous balance $95,152.38
+  PASS  2026-06 · all accounts: previous projected $103,832.26
+  PASS  2026-06 · Operating checking: 24 rows
+  PASS  2026-06 · Operating checking: previous balance -$1,847.62
+  PASS  2026-06 · Operating checking: previous projected $6,832.26
+  PASS  2026-06 · Payroll: 4 rows
+  PASS  2026-06 · Payroll: previous balance $12,000.00
+  PASS  2026-06 · Payroll: previous projected $12,000.00
+  PASS  2026-06 · Savings reserve: 1 rows
+  PASS  2026-06 · Savings reserve: previous balance $85,000.00
+  PASS  2026-06 · Savings reserve: previous projected $85,000.00
+  PASS  2026-07 · all accounts: 22 rows
+  PASS  2026-07 · all accounts: previous balance $82,168.25
+  PASS  2026-07 · all accounts: previous projected $99,572.51
+  PASS  2026-07 · Operating checking: 20 rows
+  PASS  2026-07 · Operating checking: previous balance -$19,831.75
+  PASS  2026-07 · Operating checking: previous projected -$2,427.49
+  PASS  2026-07 · Payroll: 4 rows
+  PASS  2026-07 · Payroll: previous balance $12,000.00
+  PASS  2026-07 · Payroll: previous projected $12,000.00
+  PASS  2026-07 · Savings reserve: 1 rows
+  PASS  2026-07 · Savings reserve: previous balance $90,000.00
+  PASS  2026-07 · Savings reserve: previous projected $90,000.00
+  PASS  2026-08 · all accounts: 22 rows
+  PASS  2026-08 · all accounts: previous balance $59,026.03
+  PASS  2026-08 · all accounts: previous projected $88,081.05
+  PASS  2026-08 · Operating checking: 20 rows
+  PASS  2026-08 · Operating checking: previous balance -$47,973.97
+  PASS  2026-08 · Operating checking: previous projected -$18,918.95
+  PASS  2026-08 · Payroll: 4 rows
+  PASS  2026-08 · Payroll: previous balance $12,000.00
+  PASS  2026-08 · Payroll: previous projected $12,000.00
+  PASS  2026-08 · Savings reserve: 1 rows
+  PASS  2026-08 · Savings reserve: previous balance $95,000.00
+  PASS  2026-08 · Savings reserve: previous projected $95,000.00
+  PASS  2026-09 · all accounts: 27 rows
+  PASS  2026-09 · all accounts: previous balance $51,293.07
+  PASS  2026-09 · all accounts: previous projected $80,348.09
+  PASS  2026-09 · all accounts: running realized balance on 2026-09-30
+  PASS  2026-09 · all accounts: running projected balance on 2026-09-30
+  PASS  2026-09 · all accounts: 1 pending
+  PASS  2026-09 · all accounts: 1 overdue
+  PASS  2026-09 · Operating checking: 25 rows
+  PASS  2026-09 · Operating checking: previous balance -$60,706.93
+  PASS  2026-09 · Operating checking: previous projected -$31,651.91
+  PASS  2026-09 · Operating checking: running realized balance on 2026-09-30
+  PASS  2026-09 · Operating checking: running projected balance on 2026-09-30
+  PASS  2026-09 · Operating checking: 1 pending
+  PASS  2026-09 · Operating checking: 1 overdue
+  PASS  2026-09 · Payroll: 4 rows
+  PASS  2026-09 · Payroll: previous balance $12,000.00
+  PASS  2026-09 · Payroll: previous projected $12,000.00
+  PASS  2026-09 · Payroll: running realized balance on 2026-09-30
+  PASS  2026-09 · Payroll: running projected balance on 2026-09-30
+  PASS  2026-09 · Payroll: 0 pending
+  PASS  2026-09 · Payroll: 0 overdue
+  PASS  2026-09 · Savings reserve: 1 rows
+  PASS  2026-09 · Savings reserve: previous balance $100,000.00
+  PASS  2026-09 · Savings reserve: previous projected $100,000.00
+  PASS  2026-09 · Savings reserve: running realized balance on 2026-09-25
+  PASS  2026-09 · Savings reserve: running projected balance on 2026-09-25
+  PASS  2026-09 · Savings reserve: 0 pending
+  PASS  2026-09 · Savings reserve: 0 overdue
+  PASS  2026-10 · all accounts: 6 rows
+  PASS  2026-10 · all accounts: previous balance $60,256.21
+  PASS  2026-10 · all accounts: previous projected $85,581.89
+  PASS  2026-10 · Operating checking: 6 rows
+  PASS  2026-10 · Operating checking: previous balance -$56,743.79
+  PASS  2026-10 · Operating checking: previous projected -$31,418.11
+  PASS  2026-10 · Payroll: 0 rows
+  PASS  2026-10 · Payroll: previous balance $12,000.00
+  PASS  2026-10 · Payroll: previous projected $12,000.00
+  PASS  2026-10 · Savings reserve: 0 rows
+  PASS  2026-10 · Savings reserve: previous balance $105,000.00
+  PASS  2026-10 · Savings reserve: previous projected $105,000.00
+
+report · cash and accrual, all and per account
+  PASS  cash · all: income $294,580.24
+  PASS  cash · all: expenses $369,574.03
+  PASS  cash · all: expense categories match
+  PASS  cash · all: every expense row listed
+  PASS  cash report excludes pending rows
+  PASS  cash · Operating checking: income $294,580.24
+  PASS  cash · Operating checking: expenses $68,374.03
+  PASS  cash · Operating checking: expense categories match
+  PASS  cash · Operating checking: every expense row listed
+  PASS  cash · Payroll: income $0.00
+  PASS  cash · Payroll: expenses $301,200.00
+  PASS  cash · Payroll: expense categories match
+  PASS  cash · Payroll: every expense row listed
+  PASS  accrual · all: income $354,700.25
+  PASS  accrual · all: expenses $377,958.56
+  PASS  accrual · all: expense categories match
+  PASS  accrual · all: every expense row listed
+  PASS  accrual report includes pending rows
+  PASS  accrual · Operating checking: income $354,700.25
+  PASS  accrual · Operating checking: expenses $76,758.56
+  PASS  accrual · Operating checking: expense categories match
+  PASS  accrual · Operating checking: every expense row listed
+  PASS  accrual · Payroll: income $0.00
+  PASS  accrual · Payroll: expenses $301,200.00
+  PASS  accrual · Payroll: expense categories match
+  PASS  accrual · Payroll: every expense row listed
+
+rules
+  PASS  found an overdue pending transaction to mark as paid
+  PASS  setPaid uses today (2026-09-30), not the due date (2026-05-20)
+  PASS  setPaid(false) clears the payment date
+  PASS  transfer to the same account → 142
+  PASS  amount 0 → 142
+  PASS  amount 10.5 (not integer cents) → 142
+  PASS  date 2026-02-30 → 142
+  PASS  description of 201 chars → 142
+  PASS  unknown category → 142
+  PASS  unknown type → 142
+  PASS  duplicate account name → 142
+  PASS  duplicate category name → 142
+  PASS  delete an account in use → 119
+  PASS  delete a category in use → 119
+  PASS  change currency of an account with transactions → 119
+  PASS  report over 24 months → 142 LIMIT_EXCEEDED
+  PASS  create an EUR account (empty)
+  PASS  transfer USD → EUR → 142
+  PASS  delete the empty EUR account
+  PASS  create a valid expense
+  PASS  date = dueDate while pending
+  PASS  date = paidDate once paid
+  PASS  delete the temp expense
+
+159 passed, 0 failed
