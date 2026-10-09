@@ -83,3 +83,11 @@ Note: the health check line says it hits the port over http — a port check, as
   "Files pending deploy" badge (setValue after the Success dialog did not mark files dirty). After a page reload + re-marking (badge "2"),
   deploy #3 at 12:54:48Z answered 209 at 12:54:50Z. Rule: only a deploy that starts with the pending badge ships files; verify by request.
 - restore.mjs from exports/export-2026-10-09T12-45-25-880Z.json → see check-restore log for the result.
+
+# Observation 2026-10-09 ~15:05 UTC — NordVPN Threat Protection Pro blocks *.b4a.run as phishing (author's Mac)
+Headless Chrome on the author's machine (NordVPN Threat Protection Pro enabled) rendered "Website blocked — We blocked this website
+for your protection because it's a known phishing site" for https://cashflowtracker-yg1lw573.b4a.run/ AND for
+https://fastapitasks-sk2podfb.b4a.run/healthz (another Containers app), while https://www.back4app.com/ loaded normally.
+The Claude desktop Browser pane loaded the same demo URL fine (different network path). Reader-facing risk for every *.b4a.run demo;
+report to Back4app (domain reputation with Nord's list), and consider a custom domain for the demo. Screenshots for the article were
+taken from a local copy of the web app (localhost → real backend) instead.

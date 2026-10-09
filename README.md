@@ -6,7 +6,7 @@ Back4app app (Parse Server) whose classes are closed to clients: every read and 
 functions. The web app is a 40-line Express server deployed on Back4app Containers straight from this repository,
 built with the Node.js Buildpack — no Dockerfile to write.
 
-> Article: link added at publication. · Live demo: link added at publication (read-only sign-in below).
+> Article: link added at publication. · Live demo: https://cashflowtracker-yg1lw573.b4a.run (read-only sign-in below).
 
 **What it is not:** multi-tenant SaaS, bank sync, an audit trail, or double-entry accounting. It is a customizable
 internal-tool starter; `docs/api.md` → *Guarantees* says exactly what is and is not enforced.
@@ -40,7 +40,11 @@ and is regenerated every night at 03:15 UTC.
 8. **Confirm**: `curl https://<your-app>.b4a.run/healthz` returns `{"ok":true,"version":"…"}`. Sign in with the
    `finance` user from `.credentials.local.json`.
 
-Cost as tested: numbers added at publication (backend plan, Containers plan, what happens at the quota).
+Cost as tested (October 2026): the container on the Starter plan is US$5/month (0.5 vCPU, 512 MB, always on; the free
+plan's URL expires 60 minutes after each deploy). The backend ran on the free plan (25,000 requests/month, 250 MB database);
+a free app past its quota is marked *Usage Exceeded* in the dashboard. The first container deploy took about 66 s from the
+*Create app* click to `DEPLOYMENT READY`; Cloud function latency from Brazil to USA East was p50 ≈ 440 ms, p95 ≈ 540 ms
+(100 runs, `docs/evidence/`).
 
 ## How it works
 
