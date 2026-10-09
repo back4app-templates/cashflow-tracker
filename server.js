@@ -6,7 +6,10 @@ import { readFileSync } from 'node:fs';
 
 const VERSION = JSON.parse(readFileSync(new URL('./package.json', import.meta.url))).version;
 const PORT = Number(process.env.PORT) || 8080;
-const url = process.env.DATABASE_URL;
+const url = process.env.DATABASE_URL || '';
+// Back4app also injects PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE; node-postgres reads those on its own when no
+// connection string is given, so an empty DATABASE_URL (observed 2026-10-09) does not block the app.
+const viaPgVars = !url && !!process.env.PGHOST;
 const BOOT = new Date();
 
 function shape(u) {
@@ -17,15 +20,24 @@ function shape(u) {
       hasPassword: p.password.length > 0, params: Object.fromEntries(p.searchParams), length: u.length };
   } catch (e) { return { unparseable: true, length: u.length, error: e.message }; }
 }
-const sslmode = url ? new URL(url).searchParams.get('sslmode') : null;
-const pool = url ? new pg.Pool({ connectionString: url, max: 5, idleTimeoutMillis: 10000, connectionTimeoutMillis: 3000,
-  ssl: sslmode === 'disable' ? false : { rejectUnauthorized: false } }) : null;
+const sslmode = url ? new URL(url).searchParams.get('sslmode') : (process.env.PGSSLMODE || null);
+const sslOpt = sslmode === 'disable' ? false : { rejectUnauthorized: false };
+const base = url ? { connectionString: url } : {};
+let pool = (url || viaPgVars) ? new pg.Pool({ ...base, max: 5, idleTimeoutMillis: 10000, connectionTimeoutMillis: 3000, ssl: sslOpt }) : null;
+let sslUsed = 'tls (rejectUnauthorized:false)';
+// Some managed Postgres endpoints refuse TLS; if the first connection fails on SSL, retry once without it and say so.
+if (pool) pool.query('select 1').catch(async (e) => {
+  if (/ssl|tls/i.test(e.message)) { await pool.end().catch(() => {}); pool = new pg.Pool({ ...base, max: 5, ssl: false }); sslUsed = `plain (tls failed: ${e.message})`; }
+});
 
 const app = express();
 app.get('/healthz', async (req, res) => {
   const out = { ok: true, version: VERSION, bootedAt: BOOT, uptimeSec: Math.round(process.uptime()),
     envKeys: Object.keys(process.env).filter((k) => /DATABASE|PG|POSTGRES|SQL|BACK4APP|B4A|COMMIT|GIT|SOURCE|DEPLOY/i.test(k)).sort(),
-    database: pool ? 'configured' : 'missing DATABASE_URL', databaseUrlShape: shape(url) };
+    database: pool ? (url ? 'configured via DATABASE_URL' : 'configured via PG* variables') : 'no DATABASE_URL and no PGHOST',
+    databaseUrlShape: shape(url), databaseUrlEmptyButPresent: 'DATABASE_URL' in process.env && !url,
+    pgVars: { host: process.env.PGHOST, port: process.env.PGPORT, database: process.env.PGDATABASE, user: process.env.PGUSER,
+      hasPassword: !!process.env.PGPASSWORD, sslmode: process.env.PGSSLMODE || '(unset)' }, sslUsed };
   if (pool) {
     try {
       const r = await pool.query(`select version() as v, now() as now, current_user as u, current_database() as db,
@@ -44,12 +56,12 @@ app.get('/healthz', async (req, res) => {
 });
 // Opens up to ?n= connections one by one and reports where the server stops accepting them (gate: connection limit).
 app.get('/gate/connections', async (req, res) => {
-  if (!url) return res.status(400).json({ error: 'no DATABASE_URL' });
+  if (!pool) return res.status(400).json({ error: 'no database' });
   const n = Math.min(Number(req.query.n) || 30, 200), clients = [];
   let reached = 0, error = null;
   try {
     for (let i = 0; i < n; i++) {
-      const c = new pg.Client({ connectionString: url, ssl: sslmode === 'disable' ? false : { rejectUnauthorized: false }, connectionTimeoutMillis: 5000 });
+      const c = new pg.Client({ ...base, ssl: pool.options.ssl, connectionTimeoutMillis: 5000 });
       await c.connect(); clients.push(c); reached++;
     }
   } catch (e) { error = e.message; }
