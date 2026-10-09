@@ -77,3 +77,7 @@ Sequence, all on app 2030b86b…:
 - The create form pre-creates a user variable row named `DATABASE_URL` ("Your code needs a database — we connect it and
   fill this in"). With no add-on it ships empty → this is where firmbook's empty `DATABASE_URL` came from.
 - Next: add a variable to this app after creation, redeploy, check — decides whether post-creation edits fail everywhere.
+- 16:03 UTC: on `firmbook-envtest`, `APP_LABEL` added **after** creation, then *Build & deploy → Save → Deploy now*
+  (dashboard-triggered, 56 s) → `APP_LABEL` present in the process. So post-creation variables can work. Difference from
+  the failing app: every firmbook redeploy after the variable was added was **push-triggered**. Hypothesis under test:
+  push builds reuse the environment snapshot of the last dashboard-triggered deploy.
