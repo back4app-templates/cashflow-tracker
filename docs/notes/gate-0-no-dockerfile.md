@@ -33,3 +33,26 @@ Observation (candidate for the article, verify before citing): the Overview's Se
 "The latest stable Parse Server version supported by Back4App is 6.2.0 and the app is still using the version 7.5.2.
 Please consider upgrading…" — the warning text is inverted for a newly created 7.5.2 app.
 Overview also offers "MCP · Connect your AI agent" and a "BACKEND AGENT" side panel.
+
+# Containers app created 2026-10-08 14:34:33Z (click "Create app"), Free plan
+id 9aec08a0-bf4c-45a3-afe1-13d8a51a9a59 · https://cashflowtracker-yg1lw573.b4a.run · source back4app-templates/cashflow-tracker main
+Build: Node.js Buildpack · "Runtime Version" placeholder showed ">=22" (read from package.json engines) · start command
+detected "node server.js" ("Use it") · port 8080 · health check /healthz · 4 env vars (APP_ID, JS_KEY, SERVER_URL, DEMO).
+Observations:
+- Step 2 pre-filled "Environment variables: 2 set" from .env.example (APP_ID, JS_KEY with empty values) — removed and re-added via "Paste .env".
+- "Auto deploy on push — Available on paid plans — turning it on selects Starter." (Free plan: manual deploys only.)
+- Free overview: "Temporary URL Active — URL is temporary and will be live for 60 minutes · Upgrade for a Permanent URL"; plan line "0.25 vCPU · 256MB · 100 GB transfer".
+- Deployment log first lines: PREPARING DEPLOYMENT → FETCHING GITHUB REPOSITORY → "Build Method: Buildpacks — detecting your app stack" →
+  BUILDING IMAGE → "Back4app: using Node 22, pinned in your app's settings." → "Detecting your app's stack..." → "Preparing build without layer reuse...".
+- Repo visibility: a repo created after the GitHub App install does NOT appear in Containers until the GitHub→Back4app
+  setup redirect runs ("Importing repositories…"); "All repositories" alone was not enough, a push did not help either.
+  Trigger: change the installation's repository selection on GitHub and Save (redirects to containers.back4app.com/new-container?installation_id=…&setup_action=update).
+
+# First deploy timeline (Free plan, Node.js Buildpack, from the Containers deployment log, UTC, 2026-10-08)
+click "Create app" ≈14:34:33 (local clock) · 14:34:40.830 PREPARING DEPLOYMENT · 14:34:41.180 "Build Method: Buildpacks — detecting your app stack"
+· 14:34:51.864 Building your app (Node.js: detected range `22`, resolved 22.23.2, npm 10.9.8, `npm ci` 1.2 s, `npm prune`, "No build scripts found",
+"Adding default web process for `npm start`", "Back4app: default web process set to: node server.js", build finished in 4.3 s)
+· 14:34:57.574 Pushing image · 14:35:19.249 LAUNCHING CONTAINER ("Using port 8080 (from the Port setting)") · 14:35:37.917 CHECKING HEALTH
+("trying to hit the 8080 port using http") · 14:35:39.603 DEPLOYMENT READY.
+→ PREPARING → READY = 58.8 s; click → READY ≈ 66 s. /healthz answered {"ok":true,"version":"0.1.1","commit":"unknown"} (buildpack exposes no commit env).
+Note: the health check line says it hits the port over http — a port check, as observed on earlier apps; do not claim path-based checks.

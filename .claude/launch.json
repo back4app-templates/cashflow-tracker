@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cloud-files",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/serve-cloud.mjs"],
+      "port": 5179
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 8080
+    }
+  ]
+}
