@@ -31,7 +31,7 @@ export async function addSampleData(c, settings, today, user) {
   // 24 invoices: the last six are recent (issued 1–12 days ago → due within the coming week or just paid), the rest spread
   // over the previous four months so the lists show paid, partially paid and overdue states.
   for (let k = 0; k < 24; k++) {
-    const contactId = ids[k % ids.length], daysAgo = k >= 18 ? 1 + Math.floor(r() * 12) : 15 + Math.floor(r() * 100);
+    const contactId = ids[k % ids.length], daysAgo = k >= 18 ? 2 + (k - 18) * 2 : 15 + Math.floor(r() * 100);
     const issuedOn = addDays(today, -daysAgo);
     const n = 1 + Math.floor(r() * 3), body = { desc: [], qty: [], unit: [] };
     for (let j = 0; j < n; j++) { const [d, cents] = SERVICES[Math.floor(r() * SERVICES.length)]; body.desc.push(d); body.qty.push(String(1 + Math.floor(r() * 3))); body.unit.push((cents / 100).toFixed(2)); }
