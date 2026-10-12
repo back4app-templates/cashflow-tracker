@@ -41,7 +41,7 @@ export async function addSampleData(c, settings, today, user) {
     for (const l of lines) await c.query('insert into invoice_items (invoice_id, position, description, qty_milli, unit_cents, net_cents, tax_cents, gross_cents) values ($1,$2,$3,$4,$5,$6,$7,$8)',
       [id, l.position, l.description, l.qty_milli, l.unit_cents, l.net_cents, l.tax_cents, l.gross_cents]);
     invoices++;
-    if (k < 21) {
+    if (k !== 19 && k !== 20) {                                    // two recent drafts, everything else issued
       await issueInvoice(c, id, settings, issuedOn, user);
       const roll = r();
       if (daysAgo > 20 && roll < 0.7) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(issuedOn, 5 + Math.floor(r() * 14)), method: 'bank transfer', invoiceId: id }, user); payments++; }
