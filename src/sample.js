@@ -46,7 +46,7 @@ export async function addSampleData(c, settings, today, user) {
       const roll = r();
       if (daysAgo > 20 && roll < 0.7) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(issuedOn, 5 + Math.floor(r() * 14)), method: 'bank transfer', invoiceId: id }, user); payments++; }
       else if (daysAgo > 20 && roll < 0.85) { await recordPayment(c, { contactId, amountCents: Math.round(totals.total / 2), paidOn: addDays(issuedOn, 7), method: 'card', invoiceId: id }, user); payments++; }
-      else if (daysAgo <= 12 && roll < 0.4) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(today, -Math.min(daysAgo, 1 + Math.floor(r() * 5))), method: 'card', invoiceId: id }, user); payments++; }
+      else if (daysAgo <= 12 && k % 3 === 0) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(today, -Math.min(daysAgo, 1 + Math.floor(r() * 5))), method: 'card', invoiceId: id }, user); payments++; }
     }
   }
   for (let k = 0; k < 18; k++) {
