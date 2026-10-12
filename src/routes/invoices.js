@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { pool, tx, audit } from '../db.js';
 import { loadInvoice, listInvoices, computeLines, saveDraft, issueInvoice, voidInvoice, markSent, setShareToken, contactCredit, applyCredit, invoiceState } from '../ledger.js';
 import { todayIn, fmtDate, fmtQty, fmtRate, parseMoney, isDate, fmtMoney } from '../money.js';
-import { h, raw, field, input, select, hidden, button, form, badge } from '../render.js';
+import { h, raw, field, input, select, hidden, button, form, badge, paginate } from '../render.js';
 import { page, barePage, money } from '../page.js';
 import { requireUser, requireRole, once, consumeOnce, setFlash } from '../auth.js';
 
@@ -12,12 +12,13 @@ const stateBadge = (i) => h`${badge(i.state, i.state === 'paid' ? 'ok' : i.state
 
 router.get('/invoices', requireUser, async (req, res) => {
   const f = ['all', 'draft', 'open', 'overdue', 'paid', 'void'].includes(req.query.f) ? req.query.f : 'all';
-  const rows = await listInvoices(pool, { filter: f, today: todayIn(req.settings.timezone) });
+  const all = await listInvoices(pool, { filter: f, today: todayIn(req.settings.timezone) });
+  const { slice: rows, nav } = paginate(all, req.query, `/invoices?f=${f}`);
   const body = h`<h1>Invoices <a class="btn" href="/invoices/new">New invoice</a></h1>
   <p class="tabs">${['all', 'draft', 'open', 'overdue', 'paid', 'void'].map((x) => h`<a href="/invoices?f=${x}" class="${x === f ? 'on' : ''}">${x}</a>`)}</p>
   ${rows.length ? h`<table><tr><th>Number</th><th>Contact</th><th>Issued</th><th>Due</th><th>State</th><th class="r">Total</th><th class="r">Balance</th></tr>
   ${rows.map((i) => h`<tr><td><a href="/invoices/${i.id}">${i.number || h`<i>draft #${i.id}</i>`}</a></td><td>${i.contact_name}</td><td>${fmtDate(i.issued_on)}</td><td>${fmtDate(i.due_on)}</td>
-    <td>${stateBadge(i)}</td><td class="r">${money(req, i.total_cents)}</td><td class="r">${i.credit ? h`credit ${money(req, i.credit)}` : money(req, i.balance)}</td></tr>`)}</table>` : h`<p class="muted">No invoices here yet.</p>`}`;
+    <td>${stateBadge(i)}</td><td class="r">${money(req, i.total_cents)}</td><td class="r">${i.credit ? h`credit ${money(req, i.credit)}` : money(req, i.balance)}</td></tr>`)}</table>${nav}` : h`<p class="muted">No invoices here yet.</p>`}`;
   page(req, res, { title: 'Invoices', body, active: '/invoices', wide: true });
 });
 

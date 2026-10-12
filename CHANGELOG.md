@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.1 — 2026-10-12
+Lists (invoices, bills, payments, contacts) show 100 rows per page; `/healthz` reports the database size. No migration.
+
 ## 0.1.0 — 2026-10-09
 First release: contacts, invoices with tax (added or included) and per-year numbering, payments and allocations with contact
 credit and refunds, voiding that preserves cash, bills with payments and categories, This week, owner/staff/demo roles,

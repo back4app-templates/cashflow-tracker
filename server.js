@@ -26,7 +26,7 @@ app.locals.pages = { forbidden };
 app.get('/healthz', async (req, res) => {
   const out = { ok: true, version: VERSION, bootedAt: BOOT, uptimeSec: Math.round(process.uptime()), schema: state.schemaVersion, maintenance: state.maintenance ? state.maintenance.kind : null };
   if (pool && !state.maintenance) {
-    try { await pool.query('select 1'); out.database = 'ok';
+    try { out.databaseBytes = Number((await pool.query('select pg_database_size(current_database()) as b')).rows[0].b); out.database = 'ok';
       // Until the owner exists, say whether the setup passphrase reached the process (length only) — the first thing a reader needs to debug.
       if (!(await pool.query('select 1 from bootstrap where id = 1')).rows.length) out.firstRun = { setupSecret: process.env.SETUP_SECRET ? `set (${process.env.SETUP_SECRET.length} chars)` : 'missing',
         envNames: Object.keys(process.env).filter((k) => !/^(PG|npm_|NODE|PATH$|HOME$|HOSTNAME$|PWD$|SHLVL$|_$|LANG|TERM$|PORT$|CNB_|DATABASE_URL$)/.test(k)).sort() };

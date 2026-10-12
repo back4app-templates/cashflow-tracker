@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { pool, tx, audit } from '../db.js';
 import { listInvoices, contactCredit } from '../ledger.js';
 import { todayIn, fmtDate } from '../money.js';
-import { h, field, input, button, form, badge } from '../render.js';
+import { h, field, input, button, form, badge, paginate } from '../render.js';
 import { page, money } from '../page.js';
 import { requireUser, requireRole, once, consumeOnce } from '../auth.js';
 
@@ -10,9 +10,9 @@ export const router = Router();
 const write = requireRole('owner', 'staff');
 
 router.get('/contacts', requireUser, async (req, res) => {
-  const rows = (await pool.query(`select c.*, (select count(*) from invoices i where i.contact_id = c.id) as invoices, (select count(*) from bills b where b.supplier_id = c.id) as bills from contacts c order by c.name`)).rows;
+  const { slice: rows, nav } = paginate((await pool.query(`select c.*, (select count(*) from invoices i where i.contact_id = c.id) as invoices, (select count(*) from bills b where b.supplier_id = c.id) as bills from contacts c order by c.name`)).rows, req.query, '/contacts');
   page(req, res, { title: 'Contacts', active: '/contacts', body: h`<h1>Contacts <a class="btn" href="/contacts/new">New contact</a></h1>
-    ${rows.length ? h`<table><tr><th>Name</th><th>E-mail</th><th>Phone</th><th class="r">Invoices</th><th class="r">Bills</th></tr>${rows.map((c) => h`<tr><td><a href="/contacts/${c.id}">${c.name}</a> ${c.is_sample ? badge('sample', 'muted') : ''}</td><td>${c.email}</td><td>${c.phone}</td><td class="r">${c.invoices}</td><td class="r">${c.bills}</td></tr>`)}</table>` : h`<p class="muted">No contacts yet. Customers and suppliers both live here.</p>`}` });
+    ${rows.length ? h`<table><tr><th>Name</th><th>E-mail</th><th>Phone</th><th class="r">Invoices</th><th class="r">Bills</th></tr>${rows.map((c) => h`<tr><td><a href="/contacts/${c.id}">${c.name}</a> ${c.is_sample ? badge('sample', 'muted') : ''}</td><td>${c.email}</td><td>${c.phone}</td><td class="r">${c.invoices}</td><td class="r">${c.bills}</td></tr>`)}</table>${nav}` : h`<p class="muted">No contacts yet. Customers and suppliers both live here.</p>`}` });
 });
 const contactForm = (req, c, action) => form(action, req.user, once(), h`<div class="grid2">${field('Name', input('name', c?.name || '', 'required'))}${field('E-mail', input('email', c?.email || '', 'type="email"'))}
   ${field('Phone', input('phone', c?.phone || ''))}</div>${field('Address (shown on invoices)', h`<textarea name="address" rows="3">${c?.address || ''}</textarea>`)}${field('Notes (private)', input('notes', c?.notes || ''))}${button('Save')}`);

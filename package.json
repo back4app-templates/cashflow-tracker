@@ -1,6 +1,6 @@
 {
   "name": "firmbook",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Invoices, bills and a weekly money view for one small business — Node 22 + Express 5 + PostgreSQL, deployed from a GitHub fork to Back4app Containers using only a browser.",
   "license": "MIT",

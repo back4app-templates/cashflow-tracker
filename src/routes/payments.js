@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { pool, tx } from '../db.js';
 import { recordPayment, deletePayment, loadInvoice, contactCredit, invoiceState } from '../ledger.js';
 import { todayIn, fmtDate, parseMoney } from '../money.js';
-import { h, field, input, select, hidden, button, form, badge } from '../render.js';
+import { h, field, input, select, hidden, button, form, badge, paginate } from '../render.js';
 import { page, money } from '../page.js';
 import { requireUser, requireRole, once, consumeOnce, setFlash } from '../auth.js';
 
@@ -10,14 +10,15 @@ export const router = Router();
 const write = requireRole('owner', 'staff');
 
 router.get('/payments', requireUser, async (req, res) => {
-  const rows = (await pool.query(`select p.*, c.name as contact_name, u.name as by_name,
+  const all = (await pool.query(`select p.*, c.name as contact_name, u.name as by_name,
     coalesce((select sum(amount_cents) from allocations a where a.payment_id = p.id),0)::bigint as allocated_cents,
     (select string_agg(i.number, ', ') from allocations a join invoices i on i.id = a.invoice_id where a.payment_id = p.id) as invoices
-    from payments p join contacts c on c.id = p.contact_id left join users u on u.id = p.created_by order by p.paid_on desc, p.id desc limit 500`)).rows;
+    from payments p join contacts c on c.id = p.contact_id left join users u on u.id = p.created_by order by p.paid_on desc, p.id desc`)).rows;
+  const { slice: rows, nav } = paginate(all, req.query, '/payments');
   const body = h`<h1>Payments <a class="btn" href="/payments/new">Record a payment</a></h1><p class="muted">Cash movements, in and out of your contacts. Allocation to invoices is shown on the right; the total received is the sum of this list, never of allocations.</p>
   ${rows.length ? h`<table><tr><th>Date</th><th>Contact</th><th>Direction</th><th>Method</th><th class="r">Amount</th><th>Applied to</th></tr>
   ${rows.map((p) => h`<tr><td>${fmtDate(p.paid_on)}</td><td>${p.contact_name}</td><td>${p.direction === 'refunded' ? badge('refund', 'warn') : badge('received', 'ok')}</td><td>${p.method}</td><td class="r"><a href="/payments/${p.id}">${money(req, p.amount_cents)}</a></td>
-    <td>${p.invoices || h`<span class="muted">${p.direction === 'received' ? 'credit' : '—'}</span>`}${Number(p.allocated_cents) && Number(p.allocated_cents) < Number(p.amount_cents) ? h` <span class="muted">(+${money(req, p.amount_cents - p.allocated_cents)} credit)</span>` : ''}</td></tr>`)}</table>` : h`<p class="muted">No payments yet.</p>`}`;
+    <td>${p.invoices || h`<span class="muted">${p.direction === 'received' ? 'credit' : '—'}</span>`}${Number(p.allocated_cents) && Number(p.allocated_cents) < Number(p.amount_cents) ? h` <span class="muted">(+${money(req, p.amount_cents - p.allocated_cents)} credit)</span>` : ''}</td></tr>`)}</table>${nav}` : h`<p class="muted">No payments yet.</p>`}`;
   page(req, res, { title: 'Payments', body, active: '/payments', wide: true });
 });
 

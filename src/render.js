@@ -46,3 +46,13 @@ export const button = (label, cls = 'btn') => h`<button class="${cls}">${label}<
 /** A POST form that carries the CSRF token and a one-time key; `once` is created by the route. */
 export const form = (action, user, once, body, attrs = '') => h`<form method="post" action="${action}" ${raw(attrs)}>${hidden('_csrf', user.csrf)}${once ? hidden('_once', once) : ''}${body}</form>`;
 export const badge = (text, kind = '') => h`<span class="badge ${kind}">${text}</span>`;
+
+/** Simple pager: ?page=N, PAGE rows per page. Returns the slice plus the links to render. */
+export const PAGE = 100;
+export function paginate(rows, query, base) {
+  const pages = Math.max(1, Math.ceil(rows.length / PAGE)), page = Math.min(pages, Math.max(1, Number(query.page) || 1));
+  const slice = rows.slice((page - 1) * PAGE, page * PAGE);
+  const link = (n, label) => h`<a href="${base}${base.includes('?') ? '&' : '?'}page=${n}">${label}</a>`;
+  const nav = pages > 1 ? h`<p class="pager">${page > 1 ? link(page - 1, '‹ Newer') : ''} <span class="muted">page ${page} of ${pages} · ${rows.length} rows</span> ${page < pages ? link(page + 1, 'Older ›') : ''}</p>` : '';
+  return { slice, nav, page, pages };
+}

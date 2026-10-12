@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { pool, tx, audit } from '../db.js';
 import { listBills, loadBill, billState } from '../ledger.js';
 import { todayIn, fmtDate, parseMoney, isDate } from '../money.js';
-import { h, field, input, select, button, form, badge } from '../render.js';
+import { h, field, input, select, button, form, badge, paginate } from '../render.js';
 import { page, money } from '../page.js';
 import { requireUser, requireRole, once, consumeOnce, setFlash } from '../auth.js';
 
@@ -12,11 +12,11 @@ const sb = (b) => h`${badge(b.state, b.state === 'paid' ? 'ok' : b.state === 'vo
 
 router.get('/bills', requireUser, async (req, res) => {
   const f = ['all', 'open', 'overdue', 'paid', 'void'].includes(req.query.f) ? req.query.f : 'all';
-  const rows = await listBills(pool, { filter: f, today: todayIn(req.settings.timezone) });
+  const { slice: rows, nav } = paginate(await listBills(pool, { filter: f, today: todayIn(req.settings.timezone) }), req.query, `/bills?f=${f}`);
   page(req, res, { title: 'Bills', active: '/bills', wide: true, body: h`<h1>Bills <a class="btn" href="/bills/new">New bill</a></h1>
   <p class="tabs">${['all', 'open', 'overdue', 'paid', 'void'].map((x) => h`<a href="/bills?f=${x}" class="${x === f ? 'on' : ''}">${x}</a>`)}</p>
   ${rows.length ? h`<table><tr><th>Due</th><th>Bill</th><th>Supplier</th><th>Category</th><th>State</th><th class="r">Amount</th><th class="r">Balance</th></tr>
-  ${rows.map((b) => h`<tr><td>${fmtDate(b.due_on)}</td><td><a href="/bills/${b.id}">${b.description}</a></td><td>${b.supplier_name}</td><td>${b.category_name || ''}</td><td>${sb(b)}</td><td class="r">${money(req, b.amount_cents)}</td><td class="r">${money(req, b.balance)}</td></tr>`)}</table>` : h`<p class="muted">No bills here.</p>`}` });
+  ${rows.map((b) => h`<tr><td>${fmtDate(b.due_on)}</td><td><a href="/bills/${b.id}">${b.description}</a></td><td>${b.supplier_name}</td><td>${b.category_name || ''}</td><td>${sb(b)}</td><td class="r">${money(req, b.amount_cents)}</td><td class="r">${money(req, b.balance)}</td></tr>`)}</table>${nav}` : h`<p class="muted">No bills here.</p>`}` });
 });
 router.get('/bills/new', write, async (req, res) => {
   const contacts = (await pool.query('select id, name from contacts order by name')).rows, cats = (await pool.query(`select id, name from categories where kind = 'expense' order by name`)).rows;

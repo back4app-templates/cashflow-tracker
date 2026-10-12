@@ -106,3 +106,13 @@ Sequence, all on app 2030b86b…:
   demo was re-seeded with the improved sample data (This week: $858.60 due in, 7 overdue invoices $5,326.50, $328 due
   out, $8,575.40 received in the last 7 days). The Claude-in-Chrome path to the dashboard works when the owner is signed
   in there (the in-app browser's session had expired).
+
+## 2026-10-12 12:44–12:56 UTC — scale run on the live demo (`scripts/load-dataset.mjs`)
+
+- 1,000 invoices (3 lines each) + 2,000 payments created **through the app's own forms** over HTTPS, 6 in parallel:
+  616 s, 0 failures (numbering stayed unique under parallel issues on the real database).
+- Latency with that dataset (100 sequential requests after warm-up, demo user, from São Paulo): This week p50 511 /
+  p95 636 ms (unchanged); **Invoices p50 1,272 / p95 1,406 ms** — the list rendered all 1,024 rows on one page; healthz
+  p50 411. → Pagination added (release 0.1.1) and the run repeats.
+- Full backup with the dataset: 155,844 bytes in 2.0 s. `Settings → Restore` of the pre-scale backup (247 rows):
+  668 ms, invoices back from 1,024 to 24, everyone signed out as designed.
