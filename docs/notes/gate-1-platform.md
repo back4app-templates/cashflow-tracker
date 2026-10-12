@@ -89,3 +89,16 @@ Sequence, all on app 2030b86b…:
 - Decision: move the demo to a fresh app created the way the article tells the reader to (secret in the create form):
   `firmbook-envtest` (e7dae17a-2ce1-499a-801b-f44aba79f855) → owner upgrades it to Starter + PostgreSQL; keep 2030b86b…
   untouched for the Containers team to inspect.
+
+## 2026-10-12 — demo deployment on `firmbook-envtest` (e7dae17a-2ce1-499a-801b-f44aba79f855)
+
+- Owner upgraded the app to Starter + PostgreSQL at ~12:24 UTC. The plan change redeployed the app (≈60 s of "bad gateway"
+  from the edge while the new container came up — no maintenance page from the platform in between). `/healthz` then:
+  `database: ok`, `schema: 001` (migration applied on the add-on at boot), `SETUP_SECRET set (38 chars)`.
+- `scripts/live-setup.mjs` ran the first-run flow over HTTPS: owner, company settings, demo + staff users, sample data.
+  `test/live-check.mjs`: 18/18 (demo read-only on every route, staff limits, share link with `X-Robots-Tag: noindex`,
+  `Referrer-Policy: no-referrer`, `Cache-Control: no-store`, backup download 8,185 bytes, first-run details gone from healthz).
+- Latency from São Paulo (187.15.86.203), 100 sequential requests per page after 5 warm-ups, demo user, sample dataset
+  (24 invoices): This week p50 497 ms / p95 616 ms; Invoices p50 507 / p95 616; /healthz p50 424 / p95 589
+  (`docs/evidence/latency-2026-10-12.csv`). The dataset-scale run (1,000 invoices) is still to do.
+- Public demo sign-in: demo@juniperlane.example / juniper-demo-2026 (read-only).
