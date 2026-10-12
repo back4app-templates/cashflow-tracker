@@ -28,8 +28,10 @@ export async function addSampleData(c, settings, today, user) {
     sup.push([(await c.query('insert into contacts (name, is_sample) values ($1,true) returning id', [name])).rows[0].id, cid]);
   }
   let invoices = 0, payments = 0, bills = 0;
+  // 24 invoices: the last six are recent (issued 1–12 days ago → due within the coming week or just paid), the rest spread
+  // over the previous four months so the lists show paid, partially paid and overdue states.
   for (let k = 0; k < 24; k++) {
-    const contactId = ids[k % ids.length], daysAgo = Math.floor(r() * 110);
+    const contactId = ids[k % ids.length], daysAgo = k >= 18 ? 1 + Math.floor(r() * 12) : 15 + Math.floor(r() * 100);
     const issuedOn = addDays(today, -daysAgo);
     const n = 1 + Math.floor(r() * 3), body = { desc: [], qty: [], unit: [] };
     for (let j = 0; j < n; j++) { const [d, cents] = SERVICES[Math.floor(r() * SERVICES.length)]; body.desc.push(d); body.qty.push(String(1 + Math.floor(r() * 3))); body.unit.push((cents / 100).toFixed(2)); }
@@ -42,8 +44,9 @@ export async function addSampleData(c, settings, today, user) {
     if (k < 21) {
       await issueInvoice(c, id, settings, issuedOn, user);
       const roll = r();
-      if (daysAgo > 20 && roll < 0.7) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(issuedOn, 5 + Math.floor(r() * 20)), method: 'bank transfer', invoiceId: id }, user); payments++; }
-      else if (roll < 0.85) { await recordPayment(c, { contactId, amountCents: Math.round(totals.total / 2), paidOn: addDays(issuedOn, 7), method: 'card', invoiceId: id }, user); payments++; }
+      if (daysAgo > 20 && roll < 0.7) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(issuedOn, 5 + Math.floor(r() * 14)), method: 'bank transfer', invoiceId: id }, user); payments++; }
+      else if (daysAgo > 20 && roll < 0.85) { await recordPayment(c, { contactId, amountCents: Math.round(totals.total / 2), paidOn: addDays(issuedOn, 7), method: 'card', invoiceId: id }, user); payments++; }
+      else if (daysAgo <= 12 && roll < 0.4) { await recordPayment(c, { contactId, amountCents: totals.total, paidOn: addDays(today, -Math.min(daysAgo, 1 + Math.floor(r() * 5))), method: 'card', invoiceId: id }, user); payments++; }
     }
   }
   for (let k = 0; k < 18; k++) {
@@ -51,6 +54,7 @@ export async function addSampleData(c, settings, today, user) {
     const id = (await c.query('insert into bills (supplier_id, category_id, description, amount_cents, due_on, is_sample) values ($1,$2,$3,$4,$5,true) returning id',
       [supplierId, categoryId, `${SUPPLIERS[k % sup.length][0]} — ${['monthly', 'quarterly', 'annual'][k % 3]}`, amount, dueOn])).rows[0].id;
     if (dueOn < addDays(today, -5) && r() < 0.7) await c.query('insert into bill_payments (bill_id, amount_cents, paid_on, method) values ($1,$2,$3,$4)', [id, amount, addDays(dueOn, -2), 'bank transfer']);
+    else if (dueOn >= addDays(today, -5) && dueOn <= today && r() < 0.6) await c.query('insert into bill_payments (bill_id, amount_cents, paid_on, method) values ($1,$2,$3,$4)', [id, amount, addDays(today, -1 - Math.floor(r() * 4)), 'bank transfer']);
     bills++;
   }
   await c.query(`update payments set is_sample = true where contact_id = any($1::int[])`, [ids]);
