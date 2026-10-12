@@ -102,3 +102,7 @@ Sequence, all on app 2030b86b…:
   (24 invoices): This week p50 497 ms / p95 616 ms; Invoices p50 507 / p95 616; /healthz p50 424 / p95 589
   (`docs/evidence/latency-2026-10-12.csv`). The dataset-scale run (1,000 invoices) is still to do.
 - Public demo sign-in: demo@juniperlane.example / juniper-demo-2026 (read-only).
+- 12:42 UTC: Autodeploy switched on for `firmbook-envtest` (Build & deploy → Save → Deploy now, 80 s to live). The live
+  demo was re-seeded with the improved sample data (This week: $858.60 due in, 7 overdue invoices $5,326.50, $328 due
+  out, $8,575.40 received in the last 7 days). The Claude-in-Chrome path to the dashboard works when the owner is signed
+  in there (the in-app browser's session had expired).
